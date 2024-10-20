@@ -1,0 +1,346 @@
+Book Details
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Management</title>
+</head>
+<body>
+<h1>Book Information Form</h1>
+<form action="student.php" method="POST">
+<label for="book_code">Book Code:</label>
+<input type="number" id="book_code" name="book_code"
+required><br><br>
+<label for="book_name">Book Name:</label>
+<input type="text" id="book_name" name="book_name"
+required><br><br>
+<label for="author_name">Author Name:</label>
+Web FrameWork & Services
+11
+<input type="text" id="author_name" name="author_name"
+required><br><br>
+<label for="cost">Cost:</label>
+<input type="number" step="0.01" id="cost" name="cost"
+required><br><br>
+<label for="ISBN_No">ISBN No:</label>
+<input type="text" id="ISBN_No" name="ISBN_No" required><br><br>
+<input type="submit" name="action" value="Insert">
+<input type="submit" name="action" value="Update">
+</form>
+<h1>Search Books</h1>
+<form action="student.php" method="GET">
+<label for="book_name_search">Book Name:</label>
+<input type="text" id="book_name_search"
+name="book_name_search"><br><br>
+<label for="author_name_search">Author Name:</label>
+<input type="text" id="author_name_search"
+name="author_name_search"><br><br>
+<input type="submit" value="Search">
+</form>
+</body>
+</html>
+Add.php
+<?php
+$servername = "localhost";
+$username = "root";
+$password = ""; /
+$dbname = "assignment";
+$conn = new mysqli($servername, $username, $password, $dbname);
+Web FrameWork & Services
+12
+if ($conn->connect_error) {
+die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$book_code = $_POST['book_code'];
+$book_name = $_POST['book_name'];
+$author_name = $_POST['author_name'];
+$cost = $_POST['cost'];
+$ISBN_No = $_POST['ISBN_No'];
+$action = $_POST['action'];
+if ($action == "Insert") {
+$sql = "INSERT INTO books (book_code, book_name, author_name, cost,
+ISBN_No) VALUES ('$book_code', '$book_name', '$author_name', '$cost',
+'$ISBN_No')";
+if ($conn->query($sql) === TRUE) {
+echo "New record created successfully";
+} else {
+echo "Error: " . $sql . "<br>" . $conn->error;
+}
+} elseif ($action == "Update") {
+$sql = "UPDATE books SET book_name='$book_name',
+author_name='$author_name', cost='$cost', ISBN_No='$ISBN_No' WHERE
+book_code='$book_code'";
+if ($conn->query($sql) === TRUE) {
+echo "Record updated successfully";
+} else {
+echo "Error: " . $sql . "<br>" . $conn->error;
+}
+}
+}
+if ($_SERVER["REQUEST_METHOD"] == "GET" &&
+(isset($_GET['book_name_search']) || isset($_GET['author_name_search']))) {
+$book_name = $_GET['book_name_search'];
+$author_name = $_GET['author_name_search'];
+$sql = "SELECT * FROM books WHERE book_name LIKE '%$book_name%'
+AND author_name LIKE '%$author_name%'";
+$result = $conn->query($sql);
+Web FrameWork & Services
+13
+if ($result->num_rows > 0) {
+echo "<h2>Search Results</h2>";
+while($row = $result->fetch_assoc()) {
+echo "Book Code: " . $row["book_code"]. "<br>";
+echo "Book Name: " . $row["book_name"]. "<br>";
+echo "Author Name: " . $row["author_name"]. "<br>";
+echo "Cost: " . $row["cost"]. "<br>";
+echo "ISBN No: " . $row["ISBN_No"]. "<br><br>";
+}
+} else {
+echo "No results found";
+}
+}
+$conn->close();
+?>
+
+
+
+Student Regestration
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Information</title>
+</head>
+<body>
+<h1>Student Information Form</h1>
+<form action="student.php" method="POST">
+
+<label for="roll_no">Roll No:</label>
+<input type="number" id="roll_no" name="roll_no" required><br><br>
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" required><br><br>
+<label for="age">Age:</label>
+<input type="number" id="age" name="age" required><br><br>
+<label for="city">City:</label>
+<input type="text" id="city" name="city" required><br><br>
+<label for="phone_number">Phone Number:</label>
+<input type="text" id="phone_number" name="phone_number"
+required><br><br>
+<input type="submit" name="action" value="Insert">
+<input type="submit" name="action" value="Update">
+</form>
+<h1>View Student Information</h1>
+<form action="student.php" method="GET">
+<label for="roll_no_view">Enter Roll No to View:</label>
+<input type="number" id="roll_no_view" name="roll_no_view"
+required><br><br>
+<input type="submit" value="View">
+</form>
+</body>
+</html>
+
+
+Student.php
+
+
+
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "assignment";
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+Web FrameWork & Services
+8
+die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$roll_no = $_POST['roll_no'];
+$name = $_POST['name'];
+$age = $_POST['age'];
+$city = $_POST['city'];
+$phone_number = $_POST['phone_number'];
+$action = $_POST['action'];
+if ($action == "Insert") {
+$sql = "INSERT INTO student (roll_no, name, age, city, phone_number)
+VALUES ('$roll_no', '$name', '$age', '$city', '$phone_number')";
+if ($conn->query($sql) === TRUE) {
+echo "New record created successfully";
+} else {
+echo "Error: " . $sql . "<br>" . $conn->error;
+}
+} elseif ($action == "Update") {
+$sql = "UPDATE student SET name='$name', age='$age', city='$city',
+phone_number='$phone_number' WHERE roll_no='$roll_no'";
+if ($conn->query($sql) === TRUE) {
+echo "Record updated successfully";
+} else {
+echo "Error: " . $sql . "<br>" . $conn->error;
+}
+}
+}
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['roll_no_view']))
+{
+$roll_no = $_GET['roll_no_view'];
+$sql = "SELECT * FROM student WHERE roll_no='$roll_no'";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+while($row = $result->fetch_assoc()) {
+echo "<h2>Student Details</h2>";
+echo "Roll No: " . $row["roll_no"]. "<br>";
+Web FrameWork & Services
+9
+echo "Name: " . $row["name"]. "<br>";
+echo "Age: " . $row["age"]. "<br>";
+echo "City: " . $row["city"]. "<br>";
+echo "Phone Number: " . $row["phone_number"]. "<br>";
+}
+} else {
+echo "No results found";
+}
+}
+$conn->close();
+?>
+
+
+ASP
+
+
+Webform1.aspx:
+
+<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="WebForm1.aspx.vb" Inherits="vtp.WebForm1" %> 
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>user registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="StyleSheet1.css">
+</head>
+<body>
+    <form id="form1" runat="server" class="form-container">
+        <h1 class="auto-style3">User Registration</h1>
+
+        <div class="form-group">
+            <asp:Label ID="lblFullName" runat="server" Text="Full Name"></asp:Label>
+            <asp:TextBox ID="txtFullName" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvFullName" runat="server" ControlToValidate="txtFullName" ErrorMessage="Full Name is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblAddress" runat="server" Text="Address"></asp:Label>
+            <asp:TextBox ID="txtAddress" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvAddress" runat="server" ControlToValidate="txtAddress" ErrorMessage="Address is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblMobileNo" runat="server" Text="Mobile No"></asp:Label>
+            <asp:TextBox ID="txtMobileNo" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvMobileNo" runat="server" ControlToValidate="txtMobileNo" ErrorMessage="Mobile Number is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblEmail" runat="server" Text="Email"></asp:Label>
+            <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="Invalid email format." ValidationExpression="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" CssClass="error"></asp:RegularExpressionValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblDOJ" runat="server" Text="Date of Joining"></asp:Label>
+            <asp:TextBox ID="txtDOJ" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvDOJ" runat="server" ControlToValidate="txtDOJ" ErrorMessage="Date of Joining is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblUserID" runat="server" Text="UserID"></asp:Label>
+            <asp:TextBox ID="txtUserID" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvUserID" runat="server" ControlToValidate="txtUserID" ErrorMessage="UserID is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblPassword" runat="server" Text="Password"></asp:Label>
+            <asp:TextBox ID="txtPassword" runat="server" TextMode="Password"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvPassword" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblConfirmPassword" runat="server" Text="Confirm Password"></asp:Label>
+            <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password"></asp:TextBox>
+            <asp:CompareValidator ID="cvConfirmPassword" runat="server" ControlToValidate="txtConfirmPassword" ControlToCompare="txtPassword" ErrorMessage="Passwords do not match." CssClass="error"></asp:CompareValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Button ID="Button1" runat="server" Text="Submit" Height="40px" OnClick="Button1_Click" Width="136px" />
+            <asp:Button ID="Button2" runat="server" Text="Reset" CssClass="reset-button" OnClick="Button2_Click" Height="40px" Width="136px" />
+        </div>
+
+
+    </form>
+</body>
+</html>
+
+Webform1.aspx.vb:
+
+Imports System.Data.SqlClient
+
+Public Class WebForm1
+    Inherits System.Web.UI.Page
+
+    Dim connectionString As String = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=temp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;"
+
+    Protected Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        Dim fullName As String = txtFullName.Text
+        Dim address As String = txtAddress.Text
+        Dim mobileNo As String = txtMobileNo.Text
+        Dim email As String = txtEmail.Text
+        Dim doj As DateTime = DateTime.Parse(txtDOJ.Text)
+        Dim userID As String = txtUserID.Text
+        Dim password As String = txtPassword.Text
+
+        InsertUser(fullName, address, mobileNo, email, doj, userID, password)
+
+        ' Optionally, provide feedback to the user
+        Response.Write("User registered successfully!")
+    End Sub
+
+    Protected Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        resetForm()
+    End Sub
+
+    Private Sub resetForm()
+        txtFullName.Text = ""
+        txtAddress.Text = ""
+        txtMobileNo.Text = ""
+        txtEmail.Text = ""
+        txtDOJ.Text = ""
+        txtUserID.Text = ""
+        txtPassword.Text = ""
+        txtConfirmPassword.Text = ""
+    End Sub
+
+    Public Sub InsertUser(fullName As String, address As String, mobileNo As String, email As String, doj As DateTime, userID As String, password As String)
+        Using conn As New SqlConnection(connectionString)
+            Dim query As String = "INSERT INTO Users (FullName, Address, MobileNo, Email, DOJ, UserID, Password) VALUES (@FullName, @Address, @MobileNo, @Email, @DOJ, @UserID, @Password)"
+            Using cmd As New SqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@FullName", fullName)
+                cmd.Parameters.AddWithValue("@Address", address)
+                cmd.Parameters.AddWithValue("@MobileNo", mobileNo)
+                cmd.Parameters.AddWithValue("@Email", email)
+                cmd.Parameters.AddWithValue("@DOJ", doj)
+                cmd.Parameters.AddWithValue("@UserID", userID)
+                cmd.Parameters.AddWithValue("@Password", password) ' Consider hashing the password
+                conn.Open()
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+    End Sub
+
+End Class

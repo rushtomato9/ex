@@ -1,0 +1,251 @@
+ASP
+
+
+Webform1.aspx:
+
+<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="WebForm1.aspx.vb" Inherits="vtp.WebForm1" %> 
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>user registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="StyleSheet1.css">
+</head>
+<body>
+    <form id="form1" runat="server" class="form-container">
+        <h1 class="auto-style3">User Registration</h1>
+
+        <div class="form-group">
+            <asp:Label ID="lblFullName" runat="server" Text="Full Name"></asp:Label>
+            <asp:TextBox ID="txtFullName" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvFullName" runat="server" ControlToValidate="txtFullName" ErrorMessage="Full Name is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblAddress" runat="server" Text="Address"></asp:Label>
+            <asp:TextBox ID="txtAddress" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvAddress" runat="server" ControlToValidate="txtAddress" ErrorMessage="Address is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblMobileNo" runat="server" Text="Mobile No"></asp:Label>
+            <asp:TextBox ID="txtMobileNo" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvMobileNo" runat="server" ControlToValidate="txtMobileNo" ErrorMessage="Mobile Number is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblEmail" runat="server" Text="Email"></asp:Label>
+            <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail" ErrorMessage="Invalid email format." ValidationExpression="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$" CssClass="error"></asp:RegularExpressionValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblDOJ" runat="server" Text="Date of Joining"></asp:Label>
+            <asp:TextBox ID="txtDOJ" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvDOJ" runat="server" ControlToValidate="txtDOJ" ErrorMessage="Date of Joining is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblUserID" runat="server" Text="UserID"></asp:Label>
+            <asp:TextBox ID="txtUserID" runat="server"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvUserID" runat="server" ControlToValidate="txtUserID" ErrorMessage="UserID is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblPassword" runat="server" Text="Password"></asp:Label>
+            <asp:TextBox ID="txtPassword" runat="server" TextMode="Password"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="rfvPassword" runat="server" ControlToValidate="txtPassword" ErrorMessage="Password is required." CssClass="error"></asp:RequiredFieldValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Label ID="lblConfirmPassword" runat="server" Text="Confirm Password"></asp:Label>
+            <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password"></asp:TextBox>
+            <asp:CompareValidator ID="cvConfirmPassword" runat="server" ControlToValidate="txtConfirmPassword" ControlToCompare="txtPassword" ErrorMessage="Passwords do not match." CssClass="error"></asp:CompareValidator>
+        </div>
+
+        <div class="form-group">
+            <asp:Button ID="Button1" runat="server" Text="Submit" Height="40px" OnClick="Button1_Click" Width="136px" />
+            <asp:Button ID="Button2" runat="server" Text="Reset" CssClass="reset-button" OnClick="Button2_Click" Height="40px" Width="136px" />
+        </div>
+
+
+    </form>
+</body>
+</html>
+
+Webform1.aspx.vb:
+
+Imports System.Data.SqlClient
+
+Public Class WebForm1
+    Inherits System.Web.UI.Page
+
+    Dim connectionString As String = "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=temp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;"
+
+    Protected Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        Dim fullName As String = txtFullName.Text
+        Dim address As String = txtAddress.Text
+        Dim mobileNo As String = txtMobileNo.Text
+        Dim email As String = txtEmail.Text
+        Dim doj As DateTime = DateTime.Parse(txtDOJ.Text)
+        Dim userID As String = txtUserID.Text
+        Dim password As String = txtPassword.Text
+
+        InsertUser(fullName, address, mobileNo, email, doj, userID, password)
+
+        ' Optionally, provide feedback to the user
+        Response.Write("User registered successfully!")
+    End Sub
+
+    Protected Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        resetForm()
+    End Sub
+
+    Private Sub resetForm()
+        txtFullName.Text = ""
+        txtAddress.Text = ""
+        txtMobileNo.Text = ""
+        txtEmail.Text = ""
+        txtDOJ.Text = ""
+        txtUserID.Text = ""
+        txtPassword.Text = ""
+        txtConfirmPassword.Text = ""
+    End Sub
+
+    Public Sub InsertUser(fullName As String, address As String, mobileNo As String, email As String, doj As DateTime, userID As String, password As String)
+        Using conn As New SqlConnection(connectionString)
+            Dim query As String = "INSERT INTO Users (FullName, Address, MobileNo, Email, DOJ, UserID, Password) VALUES (@FullName, @Address, @MobileNo, @Email, @DOJ, @UserID, @Password)"
+            Using cmd As New SqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@FullName", fullName)
+                cmd.Parameters.AddWithValue("@Address", address)
+                cmd.Parameters.AddWithValue("@MobileNo", mobileNo)
+                cmd.Parameters.AddWithValue("@Email", email)
+                cmd.Parameters.AddWithValue("@DOJ", doj)
+                cmd.Parameters.AddWithValue("@UserID", userID)
+                cmd.Parameters.AddWithValue("@Password", password) ' Consider hashing the password
+                conn.Open()
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+    End Sub
+
+End Class
+
+
+MAster page 
+
+Site1.master:
+<%@ Master Language="VB" AutoEventWireup="false" CodeBehind="Site1.master.vb" Inherits="vtp.Site1" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0; /* Light background color */
+        }
+
+        .header {
+            background-color: #007BFF; /* Header background color */
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .nav {
+            background-color: #333; /* Navigation bar color */
+            overflow: hidden;
+        }
+
+        .nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav a:hover {
+            background-color: #575757; /* Hover effect */
+        }
+
+        .content {
+            padding: 20px;
+            min-height: 400px; /* Ensure some height for content area */
+            background-color: white;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .footer {
+            background-color: #007BFF; /* Footer background color */
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="header">
+            <h1>My Application</h1>
+            <asp:Label ID="lblUserID" runat="server" />
+        </div>
+
+        <div class="nav">
+            <a href="Home.aspx">Home</a>
+            <a href="MathOperations.aspx">+-/*</a>
+            <a href="Employee.aspx">Employee</a>
+            <a href="DataList.aspx">Data List</a>
+            <a href="FormView.aspx">Form View</a>
+            <a href="ViewStateExample.aspx">Viewstate</a>
+            <a href="QueryStringExample.aspx">Query String</a>
+            <a href="Logout.aspx">Logout</a>
+        </div>
+
+        <div class="content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </div>
+        <div class="footer">
+           &copy; 2024 My Application. All rights reserved.
+        </div>
+    </form>
+</body>
+</html>
+
+Side1.master.vb:
+
+Public Class Site1
+    Inherits System.Web.UI.MasterPage
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            If Session("UserName") IsNot Nothing Then
+                lblUserID.Text = "Welcome, " & Session("UserName").ToString()
+            Else
+                lblUserID.Text = "Welcome, Guest"
+            End If
+        End If
+    End Sub
+End Class
